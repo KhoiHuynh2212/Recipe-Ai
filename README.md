@@ -1,1 +1,1 @@
-# Recipe-Ai
+# Recipe-Ai Local Setup
