@@ -1,138 +1,122 @@
-# AI Recipe Cooking App 🍳🤖
+AI Recipe Cooking App 🍳🤖
+Welcome to the AI Recipe Cooking App! This application uses artificial intelligence to generate personalized recipes based on user inputs, such as dietary preferences, available ingredients, and cooking time. Whether you're a beginner or a seasoned chef, this app will help you create delicious meals at home.
+Project Structure
+This project follows a modern microservices architecture:
+CopyRecipe-AI/
+├── .github/workflows/         # CI/CD pipeline configuration
+│   └── main.yml               # GitHub Actions workflow
+├── backend/                   # Node.js/Express & Python API server
+│   ├── src/                   # Backend source code
+│   │   ├── api/               # API routes
+│   │   ├── models/            # Data models
+│   │   └── services/          # Business logic
+│   ├── app.py                 # Python Flask application
+│   └── requirements.txt       # Python dependencies
+├── frontend/src/              # React.js application
+│   ├── components/            # Reusable UI components
+│   ├── pages/                 # Page components
+│   ├── services/              # API client services
+│   ├── styles/                # CSS and styling
+│   └── utils/                 # Utility functions
+└── ml/                        # Machine Learning model
+    ├── data/                  # Training and test data
+    ├── models/                # Trained models
+    └── training/              # Training scripts
+Features ✨
 
-Welcome to the **AI Recipe Cooking App**! This app uses artificial intelligence to generate personalized recipes based on user inputs, such as dietary preferences, available ingredients, and cooking time. Whether you're a beginner or a seasoned chef, this app will help you create delicious meals at home.
+Personalized Recipe Recommendations: Get recipes tailored to your dietary preferences (e.g., vegan, gluten-free) and available ingredients.
+Ingredient Parsing: Input the ingredients you have at home, and the app will suggest recipes you can make.
+User Profiles: Save your preferences, cooking history, and favorite recipes.
+Step-by-Step Instructions: Easy-to-follow cooking instructions for every recipe.
+AI-Powered Suggestions: Discover new recipes based on your cooking habits and preferences.
+Responsive Design: Works seamlessly on desktop, tablet, and mobile devices.
 
----
+Technologies Used 💻
+Frontend
 
-## Table of Contents
-1. [Features](#features)
-2. [Technologies Used](#technologies-used)
-3. [Installation](#installation)
-4. [Usage](#usage)
-5. [API Documentation](#api-documentation)
-6. [Development Workflow](#development-workflow)
-7. [Testing](#testing)
-8. [Deployment](#deployment)
-9. [Contributing](#contributing)
-10. [License](#license)
-11. [Contact](#contact)
+React.js: A JavaScript library for building user interfaces.
+Tailwind CSS: A utility-first CSS framework for styling.
+Axios: For making HTTP requests to the backend.
 
----
+Backend
 
-## Features ✨
-- **Personalized Recipe Recommendations**: Get recipes tailored to your dietary preferences (e.g., vegan, gluten-free) and available ingredients.
-- **Ingredient Parsing**: Input the ingredients you have at home, and the app will suggest recipes you can make.
-- **User Profiles**: Save your preferences, cooking history, and favorite recipes.
-- **Step-by-Step Instructions**: Easy-to-follow cooking instructions for every recipe.
-- **AI-Powered Suggestions**: Discover new recipes based on your cooking habits and preferences.
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices.
+Python/Flask: For the AI model API.
+Node.js/Express: For user management and authentication.
+MongoDB: A NoSQL database for storing user profiles and recipes.
 
----
+AI/ML
 
-## Technologies Used 💻
-### Frontend
-- **React.js**: A JavaScript library for building user interfaces.
-- **Tailwind CSS**: A utility-first CSS framework for styling.
-- **Axios**: For making HTTP requests to the backend.
+Python: For building the AI/ML models.
+TensorFlow/PyTorch: Open-source machine learning frameworks.
+Natural Language Processing (NLP): For parsing user inputs and understanding ingredients.
 
-### Backend
-- **Node.js**: A JavaScript runtime for building the server.
-- **Express.js**: A web framework for Node.js.
-- **MongoDB**: A NoSQL database for storing user profiles and recipes.
-- **Mongoose**: An ODM (Object Data Modeling) library for MongoDB.
+CI/CD Pipeline
 
-### AI/ML
-- **Python**: For building the AI/ML models.
-- **TensorFlow**: An open-source machine learning framework.
-- **Natural Language Processing (NLP)**: For parsing user inputs and understanding ingredients.
+GitHub Actions: For continuous integration and deployment.
+Render: For hosting the backend API.
+GitHub Pages: For hosting the frontend application.
 
-### Version Control & Collaboration
-- **Git**: For version control.
-- **GitHub**: For hosting the repository and collaboration.
+Installation and Setup
+Prerequisites
 
-### Deployment
-- **Docker**: For containerizing the application.
-- **AWS (Amazon Web Services)**: For cloud hosting (or your preferred cloud provider).
+Node.js and npm
+Python 3.8+
+Git
 
----
+Local Development Setup
 
-## Installation 🛠️
+Clone the repository
+Copygit clone https://github.com/KhoiHuynh2212/Recipe-AI.git
+cd Recipe-AI
 
-- **Prerequisites**
-	Before installing this project, ensure you have the following installed on your system:
-	 - ** Python 3.8+ (Download Python3 https://www.python.org/downloads/) **
-	 - **pip (Python package manager) (comes with Python)**
-	 - ** PyTorch (Deep Learning Framework) (Download Pytorch https://pytorch.org/) **
-	 - ** Virtual Environment (optional but recommended) **
+Backend Setup
+Copycd backend
+pip install -r requirements.txt
+python app.py
+The backend will be available at http://localhost:5000
+Frontend Setup
+Copycd frontend
+npm install
+npm start
+The frontend will be available at http://localhost:3000
 
+Deployment
+This project uses GitHub Actions for CI/CD pipeline:
 
-- **Install Step**
-	**1. Clone the Repository**
-		git clone https://github.com/Group-M/AiRecipe-project.git
-  		cd AiReciepe-project
-  	**2. Create and Activate a Virtual Environment**
-		# Create virtual environment
-			python3 -m venv venv
+Frontend: Automatically deployed to GitHub Pages
+Backend: Automatically deployed to Render
+AI Model: Automatically deployed to Render
 
-		# Activate it (MacOS/Linux)
-		source venv/bin/activate
+The deployment is triggered automatically when changes are pushed to the main branch.
+API Documentation
+Recipe Generation Endpoint
+CopyPOST /api/generate
+Request Body:
+jsonCopy{
+  "ingredients": ["chicken", "rice", "onions"],
+  "preferences": {
+    "dietary": ["gluten-free"],
+    "time": ["quick"]
+  }
+}
+Response:
+jsonCopy{
+  "name": "Quick Chicken Stir Fry",
+  "ingredients": ["2 chicken breasts", "1 cup rice", "1 onion"],
+  "instructions": ["Step 1: ...", "Step 2: ..."],
+  "cookTime": 20,
+  "servings": 2
+}
+Contributing
 
-		# Activate it (Windows)
-		venv\Scripts\activate
+Fork the repository
+Create a feature branch: git checkout -b new-feature
+Commit your changes: git commit -m 'Add new feature'
+Push to the branch: git push origin new-feature
+Submit a pull request
 
-	**3. Install Dependencies**
-		pip install --upgrade pip
-		pip install -r requirements.txt
-
-	**4. Install PyTorch**
-	Download Pytorch https://pytorch.org/
-	pip install torch torchvision torchaudio
-
-
-	**5. Verify Installation**
-	python -c "import torch; print(torch.__version__)"
-
-	If PyTorch is installed correctly, it should print the installed version number.
-
-
-### Usage 🍽️
-- **Create a User Profile**: Sign up and input your dietary preferences and restrictions.
-
-- **Input Ingredients** : Enter the ingredients you have at home.
-
-- **Get Recipes** : The app will generate personalized recipes based on your inputs.
-
-- **Cook and Enjoy** : Follow the step-by-step instructions to prepare your meal.
-
-### Configuration
-- **Environment Variables**: Create a .env file in the root of both the frontend and backend directories. This file contains sensitive information like API keys, database credentials, and other configurations that should not be hard-coded.
-
-- **Backend Configuration(.env file)** : The backend requires a few environment variables to connect to the database and other services.
-
-- **Frontend Configuration (.env file)** : For the frontend, you'll configure the backend API URL and any third-party services.
-
-- **Cook and Enjoy** : Follow the step-by-step instructions to prepare your meal.
-
-###Contributing Guidelines 
-We welcome contributions to the AI Recipe Cooking App! Here’s how to contribute:
-
-- **Fork the repository and clone it to your local machine.**
-- **Create a new branch for your feature or fix.**
-- **Commit your changes with a descriptive message.**
-- **Push your changes to your fork.**
-- **Create a Pull Request to merge into the main branch.**
-- **Code review: We’ll review and provide feedback. Update as needed.**
-
-## Lisense
-This project is licensed under the OU COMPUTER SCIENCE License.
-
-You are free to use, modify, and distribute the code, with the following conditions:
-
-- ** Include the original copyright notice and license in all copies or substantial portions of the software.** 
-- ** The software is provided "as is" without warranty of any kind.** 
-
-
-###Contact
-Group-M - GroupM@email.com
-
-
+License
+This project is licensed under the MIT License - see the LICENSE file for details.
+Contact
+Your Name - khoihuynh2212@gmail.com
+Project Link: https://github.com/KhoiHuynh2212/Recipe-AI
