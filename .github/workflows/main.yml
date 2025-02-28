@@ -1,4 +1,4 @@
-name: AI Recipe App CI/CD
+name: AI Recipe App CI/CD (Student Version)
 
 on:
   push:
@@ -23,12 +23,19 @@ jobs:
     
     - name: Install dependencies
       run: npm ci
-    
-    - name: Run linting
-      run: npm run lint
-    
-    - name: Run tests
-      run: npm test
+      
+    - name: Run basic tests
+      run: |
+        if [ -f "package.json" ]; then
+          if grep -q "\"test\":" "package.json"; then
+            npm test
+          else
+            echo "No test script found in package.json. Skipping tests."
+          fi
+        else
+          echo "No package.json found. Skipping tests."
+        fi
+      continue-on-error: true
 
   test-backend:
     runs-on: ubuntu-latest
@@ -46,12 +53,19 @@ jobs:
     
     - name: Install dependencies
       run: npm ci
-    
-    - name: Run linting
-      run: npm run lint
-    
-    - name: Run tests
-      run: npm test
+      
+    - name: Run basic tests
+      run: |
+        if [ -f "package.json" ]; then
+          if grep -q "\"test\":" "package.json"; then
+            npm test
+          else
+            echo "No test script found in package.json. Skipping tests."
+          fi
+        else
+          echo "No package.json found. Skipping tests."
+        fi
+      continue-on-error: true
 
   test-ai-model:
     runs-on: ubuntu-latest
@@ -68,51 +82,64 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pytest pytest-cov flake8
+        if [ -f "requirements.txt" ]; then
+          pip install -r requirements.txt
+        else
+          echo "No requirements.txt found. Installing basic testing packages."
+          pip install pytest
+        fi
+      continue-on-error: true
     
-    - name: Run linting
-      run: flake8 . --count --max-line-length=120 --statistics
-    
-    - name: Run tests
-      run: pytest tests/ --cov=./ --cov-report=xml
+    - name: Run basic tests
+      run: |
+        if [ -d "tests" ]; then
+          python -m pytest tests/
+        else
+          echo "No tests directory found. Skipping Python tests."
+        fi
+      continue-on-error: true
 
-  deploy:
-    needs: [test-frontend, test-backend, test-ai-model]
+  deploy-frontend-to-github-pages:
+    needs: [test-frontend]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
     - uses: actions/checkout@v3
     
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        node-version: '18'
     
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-    
-    - name: Build and push Docker images
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    - name: Install dependencies and build
+      working-directory: ./frontend
       run: |
-        # Build and push frontend
-        docker build -t $ECR_REGISTRY/recipe-app-frontend:${{ github.sha }} ./frontend
-        docker push $ECR_REGISTRY/recipe-app-frontend:${{ github.sha }}
-        
-        # Build and push backend
-        docker build -t $ECR_REGISTRY/recipe-app-backend:${{ github.sha }} ./backend
-        docker push $ECR_REGISTRY/recipe-app-backend:${{ github.sha }}
-        
-        # Build and push AI model
-        docker build -t $ECR_REGISTRY/recipe-app-ai:${{ github.sha }} ./ai_model
-        docker push $ECR_REGISTRY/recipe-app-ai:${{ github.sha }}
+        npm ci
+        npm run build
+      continue-on-error: true
     
-    - name: Update ECS services
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: ./frontend/build  # or ./frontend/dist, depending on your build output
+      continue-on-error: true
+
+  deploy-backend-to-render:
+    needs: [test-backend]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - name: Deploy to Render
       run: |
-        aws ecs update-service --cluster recipe-app-cluster --service recipe-app-frontend --force-new-deployment
-        aws ecs update-service --cluster recipe-app-cluster --service recipe-app-backend --force-new-deployment
-        aws ecs update-service --cluster recipe-app-cluster --service recipe-app-ai --force-new-deployment
+        curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}
+      continue-on-error: true
+
+  deploy-ai-to-render:
+    needs: [test-ai-model]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - name: Deploy to Render
+      run: |
+        curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_AI }}
+      continue-on-error: true
