@@ -1,4 +1,4 @@
-AI Recipe Cooking App 🍳🤖
+AI Recipe Cooking App
 Welcome to the AI Recipe Cooking App! This app uses artificial intelligence to generate personalized recipes based on user inputs, such as dietary preferences, available ingredients, and cooking time. Whether you're a beginner or a seasoned chef, this app will help you create delicious meals at home.
 
 Table of Contents
@@ -16,7 +16,7 @@ License
 Contact
 
 
-Features ✨
+Features 
 
 Personalized Recipe Recommendations: Get recipes tailored to your dietary preferences (e.g., vegan, gluten-free) and available ingredients.
 Ingredient Parsing: Input the ingredients you have at home, and the app will suggest recipes you can make.
@@ -26,7 +26,7 @@ AI-Powered Suggestions: Discover new recipes based on your cooking habits and pr
 Responsive Design: Works seamlessly on desktop, tablet, and mobile devices.
 
 
-Technologies Used 💻
+Technologies Used 
 Frontend
 
 React.js: A JavaScript library for building user interfaces.
@@ -68,24 +68,21 @@ PyTorch (Optional, for AI model - Download from https://pytorch.org/)
 Virtual Environment (optional but recommended for Python)
 
 Frontend Installation
-bashCopy# Clone the Repository
+# Clone the Repository
 git clone https://github.com/Group-M/AiRecipe-project.git
 cd AiRecipe-project
 
 # Install frontend dependencies
 cd frontend
 npm install
-Backend Installation
-bashCopy# From the project root
+
 cd backend
 npm install
-AI Model Installation
-bashCopy# From the project root
-cd ai_model
 
+AI Model Installation
+cd ai_model
 # Create virtual environment
 python3 -m venv venv
-
 # Activate it (MacOS/Linux)
 source venv/bin/activate
 # OR Activate it (Windows)
@@ -97,11 +94,11 @@ pip install -r requirements.txt
 
 Usage 🍽️
 Running the Frontend
-bashCopycd frontend
+cd frontend
 npm start
 This will start the development server and open the app in your browser at http://localhost:3000.
 Running the Backend
-bashCopycd backend
+cd backend
 npm start
 The backend server will run on http://localhost:5000.
 Running the AI Model
@@ -180,3 +177,4 @@ The software is provided "as is" without warranty of any kind.
 
 Contact
 Group-M - GroupM@email.com
+khoihunh2212@gmail.com
