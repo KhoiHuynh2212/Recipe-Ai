@@ -1,4 +1,4 @@
-name: AI Recipe App CI/CD (Student Version)
+name: AI Recipe Chatbot Deployment
 
 on:
   push:
@@ -37,68 +37,6 @@ jobs:
         fi
       continue-on-error: true
 
-  test-backend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: './backend/package-lock.json'
-    
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Run basic tests
-      run: |
-        if [ -f "package.json" ]; then
-          if grep -q "\"test\":" "package.json"; then
-            npm test
-          else
-            echo "No test script found in package.json. Skipping tests."
-          fi
-        else
-          echo "No package.json found. Skipping tests."
-        fi
-      continue-on-error: true
-
-  test-ai-model:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./ai_model
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.8'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        if [ -f "requirements.txt" ]; then
-          pip install -r requirements.txt
-        else
-          echo "No requirements.txt found. Installing basic testing packages."
-          pip install pytest
-        fi
-      continue-on-error: true
-    
-    - name: Run basic tests
-      run: |
-        if [ -d "tests" ]; then
-          python -m pytest tests/
-        else
-          echo "No tests directory found. Skipping Python tests."
-        fi
-      continue-on-error: true
-
   deploy-frontend-to-github-pages:
     needs: [test-frontend]
     runs-on: ubuntu-latest
@@ -121,25 +59,5 @@ jobs:
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        folder: ./frontend-new/build  # or ./frontend-new/dist, depending on your build output
-      continue-on-error: true
-
-  deploy-backend-to-render:
-    needs: [test-backend]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-    - name: Deploy to Render
-      run: |
-        curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_BACKEND }}
-      continue-on-error: true
-
-  deploy-ai-to-render:
-    needs: [test-ai-model]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-    - name: Deploy to Render
-      run: |
-        curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_AI }}
+        folder: ./frontend-new/build
       continue-on-error: true
