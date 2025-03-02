@@ -111,26 +111,7 @@ Input Ingredients: Enter the ingredients you have at home.
 Get Recipes: The app will generate personalized recipes based on your inputs.
 Cook and Enjoy: Follow the step-by-step instructions to prepare your meal.
 
-
-Project Structure
-CopyAiRecipe-project/
-├── frontend/               # React frontend
-│   ├── public/             # Static files
-│   ├── src/                # Source files
-│   │   ├── components/     # React components
-│   │   ├── App.js          # Main App component
-│   │   └── index.js        # Entry point
-├── backend/                # Node.js backend
-│   ├── controllers/        # Request handlers
-│   ├── models/             # Database models
-│   ├── routes/             # API routes
-│   └── server.js           # Entry point
-└── ai_model/               # Python AI model
-    ├── data/               # Training data
-    ├── models/             # AI models
-    └── app.py              # Flask API
-
-Development Workflow
+**Development Workflow**
 
 Set up your development environment following the installation instructions.
 Create feature branches from the main branch for new features.
