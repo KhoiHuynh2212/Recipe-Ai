@@ -393,4 +393,15 @@
     }
   }
   
-  @media (max-width:
+  @media (max-width: 480px) {
+    /* Your mobile styles here */
+    .chat-ui {
+      height: 85vh;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    
+    .message-item {
+      max-width: 90%;
+    }
+  }

@@ -16,7 +16,7 @@ const MessageList = ({ messages, isTyping }) => {
       ))}
       
       {isTyping && (
-        <div className="typing-indicator">
+        <div className="typing-indicator" data-testid="typing-indicator">
           <span></span>
           <span></span>
           <span></span>
