@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import QuickReplies from './QuickReplies';
 import SuggestedReplies from './SuggestedReplies';
 import FeedbackButtons from './FeedbackButtons';
 import { useChat } from '../../contexts/ChatContext';

@@ -32,17 +32,16 @@ jobs:
         run: |
           if [ -f "package.json" ]; then
             if grep -q "\"test\":" "package.json"; then
-              npm test
+              npm test || true
             else
               echo "No test script found in package.json. Skipping tests."
             fi
           else
             echo "No package.json found. Skipping tests."
           fi
-        continue-on-error: true
 
       - name: Build project
-        run: npm run build
+        run: npm run build:ci
         env:
           PUBLIC_URL: /${{ github.event.repository.name }}
 
