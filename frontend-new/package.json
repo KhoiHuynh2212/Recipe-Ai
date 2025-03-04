@@ -13,17 +13,16 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "build:ignore": "cross-env DISABLE_ESLINT_PLUGIN=true react-scripts build",
-    "build:ci": "cross-env CI=false react-scripts build",
-    "test": "react-scripts test --watchAll=false --testEnvironment=jsdom",
-    "test:watch": "react-scripts test",
-    "test:coverage": "react-scripts test --coverage --watchAll=false",
-    "test:ci": "CI=true react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build:ci",
-    "deploy": "gh-pages -d build"
+  "start": "react-scripts start",
+  "build": "react-scripts build && node copy-404.js",
+  "build:ci": "cross-env CI=false react-scripts build && node copy-404.js",
+  "test": "react-scripts test --watchAll=false --testEnvironment=jsdom",
+  "test:watch": "react-scripts test",
+  "test:coverage": "react-scripts test --coverage --watchAll=false",
+  "test:ci": "cross-env CI=true react-scripts test --env=jsdom",
+  "eject": "react-scripts eject",
+  "predeploy": "npm run build:ci",
+  "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
