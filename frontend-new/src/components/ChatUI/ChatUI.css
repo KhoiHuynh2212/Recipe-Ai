@@ -406,4 +406,31 @@
   .message-item {
     max-width: 90%;
   }
+
+  .recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .save-recipe-btn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .save-recipe-btn:hover {
+    background-color: #45a049;
+  }
+  
+  .save-recipe-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
 }

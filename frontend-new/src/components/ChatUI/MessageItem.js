@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import SuggestedReplies from './SuggestedReplies';
 import FeedbackButtons from './FeedbackButtons';
 import { useChat } from '../../contexts/ChatContext';
+import SaveButton from '../SaveButton'; 
 
 const formatTime = (timestamp) => {
   const date = new Date(timestamp);
@@ -29,7 +30,10 @@ const MessageItem = ({ message }) => {
               className="recipe-image" 
             />
             <div className="recipe-details">
-              <h3 className="recipe-title">{recipe.title}</h3>
+              <div className="recipe-header">
+                <h3 className="recipe-title">{recipe.title}</h3>
+                <SaveButton recipe={recipe} /> {/* Add the SaveButton here */}
+              </div>
               <div className="recipe-info">
                 <span>⏱️ {recipe.time}</span>
                 <span>👥 Serves {recipe.servings}</span>

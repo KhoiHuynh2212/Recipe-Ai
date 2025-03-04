@@ -10,7 +10,7 @@ const Footer = () => {
             &copy; {new Date().getFullYear()} AI Recipe Chef
           </p>
           <p className="footer-disclaimer">
-            Powered by AI - All recipes are generated with artificial intelligence
+            Powered by AI - All recipes are generated with artificial intelligence - Enjoy your meal!
           </p>
         </div>
         
