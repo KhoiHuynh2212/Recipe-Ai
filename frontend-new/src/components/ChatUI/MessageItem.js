@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SuggestedReplies from './SuggestedReplies';
 import FeedbackButtons from './FeedbackButtons';
 import { useChat } from '../../contexts/ChatContext';
-import SaveButton from '../SaveButton'; 
+import SaveButton from './SaveButton';
 
 const formatTime = (timestamp) => {
   const date = new Date(timestamp);

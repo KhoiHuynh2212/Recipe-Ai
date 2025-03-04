@@ -1,5 +1,7 @@
+// src/components/ChatUI/SaveButton.js
 import React, { useState } from 'react';
-import { useNotification } from '../contexts/NotificationContext';
+import { useNotification } from '../../contexts/NotificationContext';
+
 
 const SaveButton = ({ recipe }) => {
   const [isSaving, setIsSaving] = useState(false);
@@ -30,19 +32,8 @@ const SaveButton = ({ recipe }) => {
       onClick={handleSave}
       disabled={isSaving}
       className="save-recipe-btn"
-      style={{
-        background: '#28a745',
-        color: 'white',
-        border: 'none',
-        borderRadius: '4px',
-        padding: '5px 10px',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        fontSize: '14px'
-      }}
     >
-      {isSaving ? 'Saving...' : 'Save Recipe'}
+      {isSaving ? '💾...' : '💾 Save'}
     </button>
   );
 };

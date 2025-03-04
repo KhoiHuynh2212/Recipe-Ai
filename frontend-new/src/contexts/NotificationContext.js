@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
 // Create context
@@ -6,9 +7,13 @@ const NotificationContext = createContext();
 // Generate unique IDs for notifications
 let notificationId = 0;
 
+/**
+ * NotificationProvider - Provider component for notification context
+ */
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
 
+  // Add a new notification
   const addNotification = useCallback((notification) => {
     const id = ++notificationId;
     
@@ -24,10 +29,12 @@ export const NotificationProvider = ({ children }) => {
     return id;
   }, []);
 
+  // Remove a notification
   const removeNotification = useCallback((id) => {
     setNotifications(prev => prev.filter(notification => notification.id !== id));
   }, []);
 
+  // Show a success notification (shorthand)
   const showSuccess = useCallback((message, options = {}) => {
     return addNotification({
       type: 'success',
@@ -37,46 +44,70 @@ export const NotificationProvider = ({ children }) => {
     });
   }, [addNotification]);
 
-  // Other notification types...
+  // Show an error notification (shorthand)
+  const showError = useCallback((message, options = {}) => {
+    return addNotification({
+      type: 'error',
+      title: options.title || 'Error',
+      message,
+      ...options
+    });
+  }, [addNotification]);
 
+  // Value to be provided by the context
   const contextValue = {
     notifications,
     addNotification,
     removeNotification,
-    showSuccess
+    showSuccess,
+    showError
   };
 
   return (
     <NotificationContext.Provider value={contextValue}>
       {children}
       
-      {notifications.map((notification) => (
-        <div 
-          key={notification.id}
-          className="notification success"
-          style={{
-            position: 'fixed',
-            top: '20px',
-            right: '20px',
-            backgroundColor: '#d4edda',
-            borderColor: '#c3e6cb',
-            color: '#155724',
-            padding: '10px 15px',
-            borderRadius: '4px',
-            boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-            zIndex: 1000
-          }}
-        >
-          <div className="notification-content">
-            {notification.title && <div className="notification-title"><strong>{notification.title}</strong></div>}
-            <div className="notification-message">{notification.message}</div>
+      {/* Render all active notifications */}
+      <div className="notifications-container">
+        {notifications.map((notification) => (
+          <div 
+            key={notification.id}
+            className={`notification ${notification.type}`}
+            style={{
+              position: 'fixed',
+              top: '20px',
+              right: '20px',
+              backgroundColor: notification.type === 'success' ? '#d4edda' : '#f8d7da',
+              color: notification.type === 'success' ? '#155724' : '#721c24',
+              padding: '12px 16px',
+              borderRadius: '4px',
+              boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+              marginBottom: '10px',
+              maxWidth: '300px',
+              zIndex: 1000
+            }}
+          >
+            {notification.title && (
+              <div className="notification-title" style={{ fontWeight: 'bold' }}>
+                {notification.title}
+              </div>
+            )}
+            <div className="notification-message">
+              {notification.message}
+            </div>
+            
+            {/* Auto-remove notification after duration */}
+            {setTimeout(() => removeNotification(notification.id), notification.duration)}
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </NotificationContext.Provider>
   );
 };
 
+/**
+ * useNotification - Custom hook to use notification context
+ */
 export const useNotification = () => {
   const context = useContext(NotificationContext);
   
@@ -86,3 +117,5 @@ export const useNotification = () => {
   
   return context;
 };
+
+export default NotificationContext;
