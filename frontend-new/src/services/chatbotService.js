@@ -56,7 +56,7 @@ const sampleRecipes = {
     breakfast: [
       {
         id: 6,
-        title: "Avocado Toast with Poached Eggs",
+        title: "Avocado Toast with Poached Eggsss",
         ingredients: ["bread", "avocado", "eggs", "salt", "pepper", "red pepper flakes", "lemon juice"],
         instructions: "1. Toast bread. 2. Mash avocado with lemon juice and spread on toast. 3. Poach eggs for 3 minutes. 4. Top toast with eggs and seasonings.",
         time: "15 minutes",
