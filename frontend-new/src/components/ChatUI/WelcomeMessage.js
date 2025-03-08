@@ -10,7 +10,7 @@ const WelcomeMessage = ({ onSuggestionClick }) => {
   
   return (
     <div className="welcome-container">
-      <h1 className="welcome-title">AI Recipe Chef</h1>
+      <h1 className="welcome-title">Please Commit</h1>
       <p className="welcome-subtitle">
         Your personal AI assistant for delicious meal ideas and cooking instructions
       </p>
