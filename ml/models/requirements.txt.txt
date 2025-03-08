@@ -1,0 +1,22 @@
+# Core ML/AI libraries
+torch==2.0.1
+tensorflow==2.12.0
+numpy==1.24.3
+pandas==2.0.2
+
+# NLP for ingredient parsing
+nltk==3.8.1
+spacy==3.6.0
+
+# Web framework for API
+flask==2.3.2
+gunicorn==20.1.0
+
+# Utilities
+scikit-learn==1.2.2
+pillow==9.5.0
+requests==2.31.0
+python-dotenv==1.0.0
+
+# Development tools
+pytest==7.3.1
