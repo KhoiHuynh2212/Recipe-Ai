@@ -12,7 +12,7 @@ const WelcomeMessage = ({ onSuggestionClick }) => {
     <div className="welcome-container">
       <h1 className="welcome-title">AI Recipe Chef</h1>
       <p className="welcome-subtitle">
-        Your personal AI assistant for delicious meal ideas and cooking instructions
+        Your personal AI assistant for fire meal ideas and cooking instructions
       </p>
       
       <div className="welcome-info">
