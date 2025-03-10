@@ -43,7 +43,7 @@ code {
 
 /* Global variables */
 :root {
-  --primary-color: #c41ef5;
+  --primary-color: green;
   --secondary-color: #10ece8;
   --background-color: white;
   --text-color: #333;
