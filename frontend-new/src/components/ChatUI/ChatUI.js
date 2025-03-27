@@ -51,9 +51,9 @@ const ChatUI = ({ onShowMealPlanner }) => {
             
             <RestrictedMealSettings onSendMessage={handleSettingsMessage} />
             
-            {/* Dietary Restriction Dropdown */}
+            {/* Time of day meal planner */}
             <div className="diet-restriction-container">
-              <label htmlFor="diet-restriction">Select Dietary Restriction:</label>
+              <label htmlFor="diet-restriction">Select What Meal You Want:</label>
               <select
                 id="diet-restriction"
                 value={dietRestriction}
