@@ -1,5 +1,4 @@
-// src/components/ChatUI/ChatUI.js
-import React from 'react';
+import React, { useState } from 'react';
 import './ChatUI.css';
 import MessageList from './MessageList';
 import InputArea from './InputArea';
@@ -11,14 +10,24 @@ import { useChat } from '../../contexts/ChatContext';
 const ChatUI = ({ onShowMealPlanner }) => {
   const { messages, isTyping, sendMessage, clearChat } = useChat();
   
+  // New state for dietary restrictions
+  const [dietRestriction, setDietRestriction] = useState('');
+
+  // Handle the dietary restriction selection
+  const handleDietChange = (event) => {
+    setDietRestriction(event.target.value);
+
+    // Send a bot message based on the selected restriction
+    const message = `The selected meal is: ${event.target.value}`;
+    sendMessage(message, false, true);  // Assuming `sendMessage` sends the message to the bot
+  };
+
   // Handler for messages from the restricted meal settings
   const handleSettingsMessage = (message) => {
     // Send a bot message to acknowledge the settings change
     if (typeof sendMessage === 'function') {
-      // If sendMessage can handle bot messages (ideal case)
-      sendMessage(message, false, true); // Assuming the third parameter indicates a bot message
+      sendMessage(message, false, true);  // Assuming the third parameter indicates a bot message
     } else {
-      // Alternative: you could add a function to your ChatContext to handle this
       console.log('Bot message:', message);
     }
   };
@@ -41,6 +50,22 @@ const ChatUI = ({ onShowMealPlanner }) => {
             />
             
             <RestrictedMealSettings onSendMessage={handleSettingsMessage} />
+            
+            {/* Dietary Restriction Dropdown */}
+            <div className="diet-restriction-container">
+              <label htmlFor="diet-restriction">Select Dietary Restriction:</label>
+              <select
+                id="diet-restriction"
+                value={dietRestriction}
+                onChange={handleDietChange}
+                className="diet-restriction-dropdown"
+              >
+                <option value="">None</option>
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+              </select>
+            </div>
           </>
         )}
         
