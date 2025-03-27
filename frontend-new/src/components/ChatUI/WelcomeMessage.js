@@ -10,22 +10,8 @@ const WelcomeMessage = ({ onSuggestionClick }) => {
   
   return (
     <div className="welcome-container">
-      <h1 className="welcome-title">AI Recipe Chef</h1>
-      <p className="welcome-subtitle">
-        Your personal AI assistant for delicious meal ideas and cooking instructions
-      </p>
-      
-      <div className="welcome-info">
-        <p>Ask me anything about recipes, ingredients, or cooking techniques!</p>
-        <p>I can help you find recipes based on:</p>
-        <ul>
-          <li>Ingredients you have available</li>
-          <li>Dietary restrictions or preferences</li>
-          <li>Time constraints</li>
-          <li>Meal types (breakfast, lunch, dinner, snack)</li>
-        </ul>
-      </div>
-      
+      <h1 className="welcome-title">How can I help you today ?</h1>
+  
       <div className="welcome-suggestions">
         {suggestions.map((suggestion, index) => (
           <button
