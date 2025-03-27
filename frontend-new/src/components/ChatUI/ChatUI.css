@@ -101,3 +101,51 @@
   border-color: var(--primary-color);
   background-color: rgba(196, 30, 245, 0.05);
 }
+
+/* Diet Filter Section */
+.diet-filter-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Style for the dropdown container */
+.diet-filter-container {
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+}
+
+/* Dropdown style */
+.diet-filter-container select {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid var(--medium-gray);
+  border-radius: 4px;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+/* Hover and focus effects */
+.diet-filter-container select:hover {
+  border-color: var(--primary-color);
+}
+
+.diet-filter-container select:focus {
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+  border-color: var(--primary-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .diet-filter-container {
+      max-width: 100%;
+  }
+}

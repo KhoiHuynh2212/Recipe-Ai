@@ -10,6 +10,10 @@ import './RestrictedMealSettings.css';
 import './IngredientManagement.css';
 import { useChat } from '../../contexts/ChatContext';
 
+// Import the new DietFilter component
+import DietFilter from './DietFilter';
+import './DietFilter.css';
+
 const ChatUI = () => {
   const { messages, isTyping, sendMessage, clearChat } = useChat();
   const [pantryIngredients, setPantryIngredients] = useState([]);
@@ -25,7 +29,6 @@ const ChatUI = () => {
       const storedIngredients = localStorage.getItem('pantryIngredients');
       if (storedIngredients) {
         const ingredientsData = JSON.parse(storedIngredients);
-        // Convert object to array of names for easier use
         const ingredientNames = Object.keys(ingredientsData);
         setPantryIngredients(ingredientNames);
       }
@@ -36,12 +39,9 @@ const ChatUI = () => {
   
   // Handler for messages from the settings components
   const handleSettingsMessage = (message) => {
-    // When a settings message is received, reload pantry ingredients
     loadPantryIngredients();
     
-    // Send a bot message to acknowledge the settings change
     if (typeof sendMessage === 'function') {
-      // If sendMessage can handle bot messages
       sendMessage(message, false, true);
     } else {
       console.log('Bot message:', message);
@@ -56,13 +56,17 @@ const ChatUI = () => {
           New Chat
         </button>
       </div>
+
+      {/* Add DietFilter component here */}
+      <div className="diet-filter-section">
+        <DietFilter />
+      </div>
       
       <div className="chat-ui-body">
         {messages.length === 1 && messages[0].isWelcome && (
           <>
             <WelcomeMessage onSuggestionClick={(suggestion) => sendMessage(suggestion, true)} />
             
-            {/* Settings buttons container */}
             <div className="settings-buttons-container">
               <RestrictedMealSettings onSendMessage={handleSettingsMessage} />
               <IngredientManagement onSendMessage={handleSettingsMessage} />
