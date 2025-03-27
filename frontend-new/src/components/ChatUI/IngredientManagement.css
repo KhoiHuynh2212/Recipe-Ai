@@ -1,0 +1,115 @@
+/* src/components/ChatUI/IngredientManagement.css */
+
+.ingredient-management {
+    margin: 15px 0;
+    width: 100%;
+  }
+  
+  .add-ingredient-form {
+    margin: 15px 0;
+  }
+  
+  .ingredient-form-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .ingredient-input {
+    flex: 1;
+    min-width: 120px;
+    padding: 8px 12px;
+    border: 1px solid var(--medium-gray);
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+  
+  .date-input {
+    min-width: 140px;
+  }
+  
+  .ingredients-list {
+    margin-top: 15px;
+    background-color: var(--light-gray);
+    padding: 10px;
+    border-radius: 6px;
+  }
+  
+  .ingredients-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    background-color: white;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .ingredients-table th {
+    padding: 8px 12px;
+    text-align: left;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: normal;
+  }
+  
+  .ingredients-table td {
+    padding: 8px 12px;
+    border-top: 1px solid var(--light-gray);
+  }
+  
+  .ingredients-table tr:nth-child(odd) td {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+  
+  .ingredients-table tr:hover td {
+    background-color: rgba(196, 30, 245, 0.05);
+  }
+  
+  .no-ingredients {
+    font-style: italic;
+    text-align: center;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: white;
+    border-radius: 4px;
+  }
+  
+  /* Styles for the clear all button */
+  .clear-all-btn {
+    background-color: transparent;
+    border: 1px solid var(--dark-gray);
+    color: var(--dark-gray);
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: block;
+    margin: 10px 0 0 auto;
+    transition: var(--transition);
+  }
+  
+  .clear-all-btn:hover {
+    background-color: var(--medium-gray);
+    color: var(--text-color);
+  }
+  
+  /* Settings container styles for layout */
+  .settings-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  @media (min-width: 768px) {
+    .settings-container {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    
+    .settings-container > div {
+      flex: 1;
+      min-width: 300px;
+    }
+  }

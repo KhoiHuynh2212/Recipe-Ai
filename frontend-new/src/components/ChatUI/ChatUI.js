@@ -1,35 +1,49 @@
-// src/components/ChatUI/ChatUI.js - Modified with RestrictedMealSettings
-import React from 'react';
+// src/components/ChatUI/ChatUI.js
+import React, { useState, useEffect } from 'react';
 import './ChatUI.css';
 import MessageList from './MessageList';
 import InputArea from './InputArea';
 import WelcomeMessage from './WelcomeMessage';
-import RestrictedMealSettings from './RestrictedMealSettings'; // Import the new component
-import './RestrictedMealSettings.css'; // Import styles
+import RestrictedMealSettings from './RestrictedMealSettings';
+import IngredientManagement from './IngredientManagement';
+import './RestrictedMealSettings.css';
+import './IngredientManagement.css';
 import { useChat } from '../../contexts/ChatContext';
 
 const ChatUI = () => {
   const { messages, isTyping, sendMessage, clearChat } = useChat();
+  const [pantryIngredients, setPantryIngredients] = useState([]);
   
-  // Handler for messages from the restricted meal settings
+  // Load pantry ingredients when component mounts
+  useEffect(() => {
+    loadPantryIngredients();
+  }, []);
+  
+  // Load pantry ingredients from localStorage
+  const loadPantryIngredients = () => {
+    try {
+      const storedIngredients = localStorage.getItem('pantryIngredients');
+      if (storedIngredients) {
+        const ingredientsData = JSON.parse(storedIngredients);
+        // Convert object to array of names for easier use
+        const ingredientNames = Object.keys(ingredientsData);
+        setPantryIngredients(ingredientNames);
+      }
+    } catch (error) {
+      console.error('Error loading pantry ingredients:', error);
+    }
+  };
+  
+  // Handler for messages from the settings components
   const handleSettingsMessage = (message) => {
-    // Send a bot message to acknowledge the settings change
-    const botMessage = {
-      id: Date.now().toString(),
-      sender: 'bot',
-      text: message,
-      timestamp: Date.now()
-    };
+    // When a settings message is received, reload pantry ingredients
+    loadPantryIngredients();
     
-    // Add this message to the chat
-    // Note: You may need to adjust this based on how your ChatContext is implemented
-    // If sendMessage doesn't support adding bot messages directly, you might need to
-    // modify your ChatContext to add this functionality
+    // Send a bot message to acknowledge the settings change
     if (typeof sendMessage === 'function') {
-      // If sendMessage can handle bot messages (ideal case)
-      sendMessage(message, false, true); // Assuming the third parameter indicates a bot message
+      // If sendMessage can handle bot messages
+      sendMessage(message, false, true);
     } else {
-      // Alternative: you could add a function to your ChatContext to handle this
       console.log('Bot message:', message);
     }
   };
@@ -48,8 +62,11 @@ const ChatUI = () => {
           <>
             <WelcomeMessage onSuggestionClick={(suggestion) => sendMessage(suggestion, true)} />
             
-            {/* Add the RestrictedMealSettings component */}
-            <RestrictedMealSettings onSendMessage={handleSettingsMessage} />
+            {/* Settings buttons container */}
+            <div className="settings-buttons-container">
+              <RestrictedMealSettings onSendMessage={handleSettingsMessage} />
+              <IngredientManagement onSendMessage={handleSettingsMessage} />
+            </div>
           </>
         )}
         

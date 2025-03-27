@@ -1,11 +1,6 @@
-// src/components/ChatUI/RestrictedMealSettings.js
+// src/components/ChatUI/RestrictedMealSettings.js - Button section update
 import React, { useState, useEffect } from 'react';
-import { 
-  setDietaryRestriction, 
-  modifyRecipeForDiet 
-} from '../../utils/restrictedMeal';
 
-// This component allows users to view and manage their dietary restrictions
 const RestrictedMealSettings = ({ onSendMessage }) => {
   const [showSettings, setShowSettings] = useState(false);
   const [currentRestriction, setCurrentRestriction] = useState('');
@@ -84,11 +79,12 @@ const RestrictedMealSettings = ({ onSendMessage }) => {
   
   return (
     <div className="restricted-meal-settings">
+      {/* Updated button styling */}
       <button 
         className="settings-toggle-btn"
         onClick={() => setShowSettings(!showSettings)}
       >
-        {showSettings ? 'Hide Dietary Preferences' : 'Dietary Preferences'}
+        Dietary Preferences
         {savedRestrictions.length > 0 && !showSettings && (
           <span className="restriction-badge">{savedRestrictions.length}</span>
         )}
