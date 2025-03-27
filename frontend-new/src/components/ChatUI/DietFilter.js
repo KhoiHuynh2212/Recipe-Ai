@@ -14,8 +14,9 @@ const DietFilter = () => {
             <label htmlFor="diet-filter">Choose Diet Preference:</label>
             <select id="diet-filter" value={selectedDiet} onChange={handleChange}>
                 <option value="none">None</option>
-                <option value="vegan">Vegan</option>
-                <option value="vegetarian">Vegetarian</option>
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner">Dinner</option>
             </select>
         </div>
     );
