@@ -149,3 +149,447 @@
       max-width: 100%;
   }
 }
+
+.input-warning {
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  animation: pulseWarning 2s infinite;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Dietary warning - yellow/orange theme */
+.input-warning.dietary-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+/* Allergen warning - red theme (more severe) */
+.input-warning.allergen-warning {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+  font-weight: 500;
+}
+
+@keyframes pulseWarning {
+  0% { opacity: 1; }
+  50% { opacity: 0.8; }
+  100% { opacity: 1; }
+}
+
+.warning-icon {
+  font-size: 1.2rem;
+}
+
+.message-input.has-warning {
+  transition: all 0.3s ease;
+}
+
+.message-input.has-warning.allergen-warning {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
+}
+
+.message-input.has-warning:not(.allergen-warning) {
+  border-color: #ffc107;
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25);
+}
+
+/* Message warning styles in the chat */
+.message-item.bot .message-content.warning-message.allergen-warning {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+}
+
+/* Recipe allergen warnings */
+.recipe-warning.allergen-warning {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-left: 4px solid #dc3545;
+}
+
+.restricted-ingredient {
+  position: relative;
+  padding-left: 5px;
+  border-left: 3px solid #dc3545;
+  animation: fadeWarning 1s ease-in-out;
+}
+
+@keyframes fadeWarning {
+  from { background-color: rgba(220, 53, 69, 0.2); }
+  to { background-color: transparent; }
+}
+
+/* Warning badge for allergens - more prominent */
+.allergen-badge {
+  display: inline-block;
+  background-color: #dc3545;
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.tab-buttons {
+  display: flex;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  background-color: white;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.tab-btn:not(.active):hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* Nutrition info card for chat tab */
+.nutrition-info-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--primary-color);
+}
+
+.info-icon {
+  font-size: 1.5rem;
+  padding-top: 5px;
+}
+
+.info-content {
+  flex: 1;
+}
+
+.info-content h4 {
+  margin: 0 0 8px 0;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+.info-content p {
+  margin: 0 0 15px 0;
+  color: var(--dark-gray);
+  font-size: 0.95rem;
+}
+
+.switch-tab-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.switch-tab-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Nutrition tab container */
+.nutrition-tab-container {
+  padding: 20px 0;
+}
+
+.tab-title {
+  color: var(--primary-color);
+  font-size: 1.4rem;
+  margin: 0 0 5px 0;
+}
+
+.tab-description {
+  color: var(--dark-gray);
+  font-size: 1rem;
+  margin: 0 0 20px 0;
+}
+
+/* Allergen section */
+.allergen-section {
+  margin: 30px 0;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  margin: 0 0 5px 0;
+  color: var(--primary-color);
+}
+
+.section-description {
+  color: var(--dark-gray);
+  margin-bottom: 20px;
+}
+
+/* Return to chat section */
+.return-to-chat {
+  margin: 30px 0;
+  text-align: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.return-chat-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.return-chat-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.return-to-chat p {
+  color: var(--dark-gray);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chat-header-actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+  }
+  
+  .tab-buttons {
+      width: 100%;
+  }
+  
+  .tab-btn {
+      flex: 1;
+  }
+  
+  .clear-chat-btn {
+      width: 100%;
+  }
+}
+
+/* Add these styles to your ChatUI.css file */
+
+/* Header tab styles */
+.chat-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.tab-buttons {
+  display: flex;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  background-color: white;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.tab-btn:not(.active):hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* Nutrition info card for chat tab */
+.nutrition-info-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--primary-color);
+}
+
+.info-icon {
+  font-size: 1.5rem;
+  padding-top: 5px;
+}
+
+.info-content {
+  flex: 1;
+}
+
+.info-content h4 {
+  margin: 0 0 8px 0;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+}
+
+.info-content p {
+  margin: 0 0 15px 0;
+  color: var(--dark-gray);
+  font-size: 0.95rem;
+}
+
+.switch-tab-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.switch-tab-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Nutrition tab container */
+.nutrition-tab-container {
+  padding: 20px 0;
+}
+
+.tab-title {
+  color: var(--primary-color);
+  font-size: 1.4rem;
+  margin: 0 0 5px 0;
+}
+
+.tab-description {
+  color: var(--dark-gray);
+  font-size: 1rem;
+  margin: 0 0 20px 0;
+}
+
+/* Allergen and Pantry sections */
+.allergen-section, .pantry-section {
+  margin: 30px 0;
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.pantry-section {
+  border-left: 4px solid #4caf50;
+}
+
+.allergen-section {
+  border-left: 4px solid #f44336;
+}
+
+.section-title {
+  font-size: 1.3rem;
+  margin: 0 0 5px 0;
+  color: var(--primary-color);
+}
+
+.section-description {
+  color: var(--dark-gray);
+  margin-bottom: 20px;
+}
+
+/* Return to chat section */
+.return-to-chat {
+  margin: 30px 0;
+  text-align: center;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+.return-chat-btn {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.return-chat-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.return-to-chat p {
+  color: var(--dark-gray);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .chat-header-actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+  }
+  
+  .tab-buttons {
+      width: 100%;
+  }
+  
+  .tab-btn {
+      flex: 1;
+  }
+  
+  .clear-chat-btn {
+      width: 100%;
+  }
+}

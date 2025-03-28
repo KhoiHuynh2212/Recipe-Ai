@@ -1,5 +1,6 @@
 // src/components/ChatUI/IngredientManagement.js
 import React, { useState, useEffect } from 'react';
+import './IngredientManagement.css';
 
 const IngredientManagement = ({ onSendMessage }) => {
   const [showPanel, setShowPanel] = useState(false);
@@ -7,6 +8,14 @@ const IngredientManagement = ({ onSendMessage }) => {
   const [type, setType] = useState('');
   const [expiration, setExpiration] = useState('');
   const [ingredients, setIngredients] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortOption, setSortOption] = useState('name');
+
+  // Common ingredient types for quick selection
+  const commonTypes = [
+    'Vegetable', 'Fruit', 'Protein', 'Dairy', 
+    'Grain', 'Spice', 'Condiment', 'Baking'
+  ];
 
   // Load ingredients from localStorage when component mounts or panel is opened
   useEffect(() => {
@@ -38,7 +47,6 @@ const IngredientManagement = ({ onSendMessage }) => {
     e.preventDefault();
 
     if (!name.trim()) {
-      alert('Please enter an ingredient name');
       return;
     }
 
@@ -49,7 +57,7 @@ const IngredientManagement = ({ onSendMessage }) => {
       
       // Add or update ingredient
       ingredientsData[name] = {
-        type: type || '',
+        type: type || 'Other',
         expiration: expiration || '',
         quantity: 1,
         addedDate: new Date().toISOString().split('T')[0]
@@ -70,7 +78,6 @@ const IngredientManagement = ({ onSendMessage }) => {
       loadIngredientsFromStorage();
     } catch (error) {
       console.error('Error:', error);
-      alert('Failed to add ingredient.');
     }
   };
 
@@ -104,61 +111,168 @@ const IngredientManagement = ({ onSendMessage }) => {
   // Clear all ingredients
   const clearAllIngredients = () => {
     try {
-      // Clear storage
-      localStorage.removeItem('pantryIngredients');
-      
-      // Clear state
-      setIngredients([]);
-      
-      // Notify the chat
-      onSendMessage('Cleared all ingredients from your pantry.');
+      if (ingredients.length === 0) return;
+
+      // Confirm before clearing
+      if (window.confirm('Are you sure you want to clear all ingredients from your pantry?')) {
+        // Clear storage
+        localStorage.removeItem('pantryIngredients');
+        
+        // Clear state
+        setIngredients([]);
+        
+        // Notify the chat
+        onSendMessage('Cleared all ingredients from your pantry.');
+      }
     } catch (error) {
       console.error('Error clearing ingredients:', error);
     }
   };
 
+  // Filter ingredients based on search term
+  const filteredIngredients = ingredients.filter(([name, details]) => {
+    return name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+           (details.type && details.type.toLowerCase().includes(searchTerm.toLowerCase()));
+  });
+
+  // Sort ingredients based on selected option
+  const sortedIngredients = [...filteredIngredients].sort((a, b) => {
+    switch (sortOption) {
+      case 'name':
+        return a[0].localeCompare(b[0]);
+      case 'type':
+        return (a[1].type || '').localeCompare(b[1].type || '');
+      case 'expiration':
+        // Sort by expiration date (items without dates go last)
+        if (!a[1].expiration && !b[1].expiration) return 0;
+        if (!a[1].expiration) return 1;
+        if (!b[1].expiration) return -1;
+        return new Date(a[1].expiration) - new Date(b[1].expiration);
+      case 'newest':
+        return new Date(b[1].addedDate || 0) - new Date(a[1].addedDate || 0);
+      default:
+        return 0;
+    }
+  });
+
+  // Get count of ingredients near expiration (within 3 days)
+  const getExpiringCount = () => {
+    if (ingredients.length === 0) return 0;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const threeDaysFromNow = new Date();
+    threeDaysFromNow.setDate(today.getDate() + 3);
+    
+    return ingredients.filter(([_, details]) => {
+      if (!details.expiration) return false;
+      const expirationDate = new Date(details.expiration);
+      return expirationDate >= today && expirationDate <= threeDaysFromNow;
+    }).length;
+  };
+
+  // Check if an ingredient is expired or close to expiring
+  const getExpirationStatus = (expirationDate) => {
+    if (!expirationDate) return null;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const expDate = new Date(expirationDate);
+    const threeDaysFromNow = new Date();
+    threeDaysFromNow.setDate(today.getDate() + 3);
+    
+    if (expDate < today) return 'expired';
+    if (expDate <= threeDaysFromNow) return 'expiring-soon';
+    return null;
+  };
+
+  // Get icon for ingredient type
+  const getTypeIcon = (type) => {
+    switch (type?.toLowerCase()) {
+      case 'vegetable': return '🥦';
+      case 'fruit': return '🍎';
+      case 'protein': return '🍗';
+      case 'dairy': return '🥛';
+      case 'grain': return '🌾';
+      case 'spice': return '🌶️';
+      case 'condiment': return '🧂';
+      case 'baking': return '🍞';
+      default: return '🍽️';
+    }
+  };
+
   return (
     <div className="ingredient-management">
-      <button 
-        className="settings-toggle-btn"
-        onClick={() => setShowPanel(!showPanel)}
-      >
-        {showPanel ? 'Hide My Pantry' : 'My Pantry'}
-        {ingredients.length > 0 && !showPanel && (
-          <span className="restriction-badge">{ingredients.length}</span>
-        )}
-      </button>
+      <div className="pantry-header">
+        <div className="pantry-title">
+          <h3>My Pantry</h3>
+          {!showPanel && ingredients.length > 0 && (
+            <div className="pantry-counts">
+              <span className="total-count">{ingredients.length}</span>
+              {getExpiringCount() > 0 && (
+                <span className="expiring-count" title="Items expiring soon">
+                  {getExpiringCount()}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        <button 
+          className="toggle-pantry-btn"
+          onClick={() => setShowPanel(!showPanel)}
+        >
+          {showPanel ? 'Hide Pantry' : 'Show Pantry'}
+        </button>
+      </div>
       
       {showPanel && (
-        <div className="settings-panel">
-          <h4>Your Pantry</h4>
-          <p>Keep track of ingredients you have at home. The assistant can suggest recipes based on what's in your pantry.</p>
-          
+        <div className="pantry-panel">
           <form onSubmit={handleSubmit} className="add-ingredient-form">
-            <div className="ingredient-form-row">
-              <input 
-                type="text" 
-                placeholder="Ingredient Name" 
-                value={name} 
-                onChange={(e) => setName(e.target.value)} 
-                className="ingredient-input"
-              />
-              <input 
-                type="text" 
-                placeholder="Type (e.g., Fruit, Vegetable)" 
-                value={type} 
-                onChange={(e) => setType(e.target.value)} 
-                className="ingredient-input"
-              />
-              <input 
-                type="date" 
-                value={expiration} 
-                onChange={(e) => setExpiration(e.target.value)} 
-                className="ingredient-input date-input"
-              />
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="ingredient-name">Ingredient</label>
+                <input 
+                  id="ingredient-name"
+                  type="text" 
+                  placeholder="Add new ingredient..." 
+                  value={name} 
+                  onChange={(e) => setName(e.target.value)} 
+                  required
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="ingredient-type">Type</label>
+                <div className="type-input-container">
+                  <input 
+                    id="ingredient-type"
+                    type="text" 
+                    placeholder="Type (optional)" 
+                    value={type} 
+                    onChange={(e) => setType(e.target.value)} 
+                    list="common-types"
+                  />
+                  <datalist id="common-types">
+                    {commonTypes.map(type => (
+                      <option key={type} value={type} />
+                    ))}
+                  </datalist>
+                </div>
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="ingredient-expiration">Expiration</label>
+                <input 
+                  id="ingredient-expiration"
+                  type="date" 
+                  value={expiration} 
+                  onChange={(e) => setExpiration(e.target.value)} 
+                />
+              </div>
+              
               <button 
                 type="submit" 
-                className="add-btn"
+                className="add-ingredient-btn"
                 disabled={!name.trim()}
               >
                 Add
@@ -166,48 +280,106 @@ const IngredientManagement = ({ onSendMessage }) => {
             </div>
           </form>
           
-          <div className="ingredients-list">
-            <h5>Your Ingredients:</h5>
+          <div className="ingredients-container">
+            <div className="ingredient-controls">
+              <div className="search-container">
+                <input
+                  type="text"
+                  placeholder="Search ingredients..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+                {searchTerm && (
+                  <button 
+                    className="clear-search-btn" 
+                    onClick={() => setSearchTerm('')}
+                    aria-label="Clear search"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+              
+              <div className="sort-container">
+                <label htmlFor="sort-select">Sort by:</label>
+                <select 
+                  id="sort-select"
+                  value={sortOption} 
+                  onChange={(e) => setSortOption(e.target.value)}
+                  className="sort-select"
+                >
+                  <option value="name">Name</option>
+                  <option value="type">Type</option>
+                  <option value="expiration">Expiration</option>
+                  <option value="newest">Recently Added</option>
+                </select>
+              </div>
+            </div>
+            
             {ingredients.length > 0 ? (
               <>
-                <table className="ingredients-table">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Type</th>
-                      <th>Expiration</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {ingredients.map(([name, details]) => (
-                      <tr key={name}>
-                        <td>{name}</td>
-                        <td>{details.type || '-'}</td>
-                        <td>{details.expiration || '-'}</td>
-                        <td>
-                          <button 
-                            className="remove-btn"
-                            onClick={() => removeIngredient(name)}
-                            title="Remove ingredient"
-                          >
-                            ×
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="ingredients-list">
+                  {sortedIngredients.map(([name, details]) => {
+                    const expirationStatus = getExpirationStatus(details.expiration);
+                    
+                    return (
+                      <div 
+                        key={name} 
+                        className={`ingredient-card ${expirationStatus ? expirationStatus : ''}`}
+                      >
+                        <div className="ingredient-icon">
+                          {getTypeIcon(details.type)}
+                        </div>
+                        <div className="ingredient-info">
+                          <h4 className="ingredient-name">{name}</h4>
+                          <div className="ingredient-meta">
+                            {details.type && (
+                              <span className="ingredient-type">{details.type}</span>
+                            )}
+                            {details.expiration && (
+                              <span className={`ingredient-expiration ${expirationStatus ? expirationStatus : ''}`}>
+                                {expirationStatus === 'expired' ? 'Expired: ' : 
+                                 expirationStatus === 'expiring-soon' ? 'Expires: ' : 
+                                 'Exp: '}
+                                {new Date(details.expiration).toLocaleDateString()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <button 
+                          className="remove-ingredient-btn"
+                          onClick={() => removeIngredient(name)}
+                          aria-label={`Remove ${name}`}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
                 
-                <button 
-                  className="clear-all-btn"
-                  onClick={clearAllIngredients}
-                >
-                  Clear All
-                </button>
+                <div className="ingredients-actions">
+                  <button 
+                    className="clear-all-btn"
+                    onClick={clearAllIngredients}
+                  >
+                    Clear All Ingredients
+                  </button>
+                  
+                  <button 
+                    className="suggest-recipes-btn"
+                    onClick={() => onSendMessage("Can you suggest recipes using ingredients from my pantry?")}
+                  >
+                    Suggest Recipes
+                  </button>
+                </div>
               </>
             ) : (
-              <p className="no-ingredients">No ingredients in your pantry yet. Add some above.</p>
+              <div className="empty-pantry">
+                <div className="empty-icon">🥄</div>
+                <p>Your pantry is empty. Add ingredients above to keep track of what you have at home.</p>
+              </div>
             )}
           </div>
         </div>
