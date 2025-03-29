@@ -1,4 +1,5 @@
-const { generateMealOptions } = require("./mealGenerator");
+//const { generateMealOptions } = require("./mealGenerator");
+import { generateMealOptions } from "../../components/ChatUI/MealGeneration";
 
 describe("Meal Generator", () => {
     test("should list vegetarian options", () => {
