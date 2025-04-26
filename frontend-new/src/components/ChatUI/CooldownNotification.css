@@ -1,0 +1,159 @@
+/* src/components/ChatUI/CooldownNotification.css */
+
+.cooldown-notification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  z-index: 1000;
+  min-width: 300px;
+  max-width: 95%;
+  animation: slideUp 0.3s ease-out;
+  border-left: 5px solid #ff9800;
+}
+
+@keyframes slideUp {
+  from { transform: translate(-50%, 100%); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.cooldown-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.cooldown-icon {
+  font-size: 2rem;
+  color: #ff9800;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.cooldown-message {
+  flex: 1;
+}
+
+.cooldown-message h4 {
+  margin: 0 0 8px 0;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.cooldown-message p {
+  margin: 0 0 12px 0;
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.cooldown-progress {
+  height: 6px;
+  background-color: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.cooldown-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #ff9800, #ff5722);
+  border-radius: 3px;
+  transition: width 1s linear;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 480px) {
+  .cooldown-notification {
+    min-width: 90%;
+    bottom: 10px;
+  }
+  
+  .cooldown-content {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .cooldown-icon {
+    margin-bottom: 10px;
+  }
+  /* Add these styles to your existing ChatUI.css file */
+
+/* Cooldown warning style */
+.input-warning.cooldown-warning {
+  background-color: #e3f2fd;
+  color: #0d47a1;
+  border: 1px solid #bbdefb;
+  animation: pulseBlue 2s infinite;
+}
+
+@keyframes pulseBlue {
+  0% { background-color: #e3f2fd; }
+  50% { background-color: #bbdefb; }
+  100% { background-color: #e3f2fd; }
+}
+
+/* Disabled input styling */
+.message-input.disabled {
+  background-color: #f5f5f5;
+  border-color: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Request monitor indicator */
+.request-monitor {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.request-count {
+  display: flex;
+  align-items: center;
+}
+
+.request-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 3px;
+}
+
+.request-dot.active {
+  background-color: #4caf50;
+}
+
+.request-dot.inactive {
+  background-color: #e0e0e0;
+}
+
+.request-dot.warning {
+  background-color: #ff9800;
+}
+
+/* Cooldown timer animation */
+@keyframes cooldownProgress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+}
