@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 require('dotenv').config();
+const authMiddleware = require('./authMiddleware');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -54,7 +55,7 @@ const UserPreference = mongoose.model('UserPreference', userPreferenceSchema);
 // Routes
 
 // Generate a recipe with Gemini AI
-app.post('/api/recipes/generate', async (req, res) => {
+app.post('/api/recipes/generate',authMiddleware, async (req, res) => {
   try {
     const { prompt, dietaryRestrictions = [], allergens = [], pantryItems = [] } = req.body;
     
@@ -153,7 +154,7 @@ function parseArrayText(text) {
 }
 
 // Save user preferences
-app.post('/api/user/preferences', async (req, res) => {
+app.post('/api/user/preferences', authMiddleware, async (req, res) => {
   try {
     const { userId, dietaryRestrictions, allergens, pantryItems } = req.body;
     
@@ -203,7 +204,7 @@ app.get('/api/user/preferences/:userId', async (req, res) => {
 });
 
 // Get saved recipes
-app.get('/api/recipes', async (req, res) => {
+app.get('/api/recipes',authMiddleware, async (req, res) => {
   try {
     const { userId, limit = 10 } = req.query;
     
