@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const authMiddleware = require('./authMiddleware');
 
@@ -21,7 +22,7 @@ mongoose.connect(process.env.MONGODB_URI)
 // Initialize Gemini AI
 // We'll use axios for direct API calls to Gemini 2.0 Flash
 const axios = require('axios');
-const GEMINI_API_KEY = process.env.AIzaSyA06ohx0b611CVGP_F9MikAzN3rehHIIrU;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY; // Fixed: Use environment variable correctly
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 // Recipe Schema
@@ -52,11 +53,49 @@ const userPreferenceSchema = new mongoose.Schema({
 
 const UserPreference = mongoose.model('UserPreference', userPreferenceSchema);
 
-// Routes
-
-// Generate a recipe with Gemini AI
-app.post('/api/recipes/generate',authMiddleware, async (req, res) => {
+// Login route - new endpoint for authentication
+app.post('/api/auth/login', async (req, res) => {
   try {
+    const { username, password } = req.body;
+    
+    // In a real application, you would validate credentials against database
+    // This is a simplified example for demonstration
+    if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
+      // Create a JWT token
+      const token = jwt.sign(
+        { userId: 'admin', username: username },
+        process.env.JWT_SECRET,
+        { expiresIn: '24h' }
+      );
+      
+      return res.json({ 
+        success: true, 
+        token,
+        message: 'Authentication successful'
+      });
+    }
+    
+    return res.status(401).json({ 
+      success: false, 
+      message: 'Invalid credentials'
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Authentication failed'
+    });
+  }
+});
+
+// Routes with authentication
+
+// Generate a recipe with Gemini AI - Protected route
+app.post('/api/recipes/generate', authMiddleware, async (req, res) => {
+  try {
+    // Access user information if available
+    const userId = req.user ? req.user.userId : 'anonymous';
+    
     const { prompt, dietaryRestrictions = [], allergens = [], pantryItems = [] } = req.body;
     
     // Format the prompt for Gemini
@@ -96,6 +135,9 @@ app.post('/api/recipes/generate',authMiddleware, async (req, res) => {
     
     // Parse the JSON from the response
     const recipeJson = extractJsonFromText(text);
+    
+    // Add the user ID to the recipe
+    recipeJson.userId = userId;
     
     // Save to database
     const recipe = new Recipe(recipeJson);
@@ -153,10 +195,20 @@ function parseArrayText(text) {
     .filter(Boolean);
 }
 
-// Save user preferences
+// Save user preferences - Protected route
 app.post('/api/user/preferences', authMiddleware, async (req, res) => {
   try {
-    const { userId, dietaryRestrictions, allergens, pantryItems } = req.body;
+    // Get user ID from token or body
+    const userId = req.user ? req.user.userId : req.body.userId;
+    
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: 'User ID is required'
+      });
+    }
+    
+    const { dietaryRestrictions, allergens, pantryItems } = req.body;
     
     // Upsert the user preferences
     const result = await UserPreference.findOneAndUpdate(
@@ -178,10 +230,20 @@ app.post('/api/user/preferences', authMiddleware, async (req, res) => {
   }
 });
 
-// Get user preferences
-app.get('/api/user/preferences/:userId', async (req, res) => {
+// Get user preferences - Protected route
+app.get('/api/user/preferences/:userId', authMiddleware, async (req, res) => {
   try {
     const { userId } = req.params;
+    
+    // Verify that the authenticated user is requesting their own preferences
+    // or is an admin
+    if (req.user && req.user.userId !== userId && req.user.userId !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: Cannot access preferences for other users'
+      });
+    }
+    
     const preferences = await UserPreference.findOne({ userId });
     
     if (!preferences) {
@@ -203,11 +265,28 @@ app.get('/api/user/preferences/:userId', async (req, res) => {
   }
 });
 
-// Get saved recipes
-app.get('/api/recipes',authMiddleware, async (req, res) => {
+// Get saved recipes - Protected route
+app.get('/api/recipes', authMiddleware, async (req, res) => {
   try {
-    const { userId, limit = 10 } = req.query;
+    const { limit = 10 } = req.query;
     
+    // If user is authenticated via JWT, get their recipes
+    let userId = req.query.userId;
+    
+    // If querying by user ID, ensure the current user is authorized to see those recipes
+    if (userId && req.user && req.user.userId !== userId && req.user.userId !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: Cannot access recipes for other users'
+      });
+    }
+    
+    // If no specific user ID requested, use the authenticated user's ID
+    if (!userId && req.user) {
+      userId = req.user.userId;
+    }
+    
+    // Build query
     let query = {};
     if (userId) {
       query.userId = userId;
@@ -224,16 +303,26 @@ app.get('/api/recipes',authMiddleware, async (req, res) => {
   }
 });
 
-// Save a recipe
-app.post('/api/recipes', async (req, res) => {
+// Save a recipe - Protected route
+app.post('/api/recipes', authMiddleware, async (req, res) => {
   try {
-    const { title, ingredients, instructions, tags, userId } = req.body;
+    // Get the user ID from the authentication token if available
+    const userId = req.user ? req.user.userId : req.body.userId || 'anonymous';
+    
+    const { title, ingredients, instructions, tags } = req.body;
+    
+    if (!title || !instructions || !ingredients) {
+      return res.status(400).json({
+        success: false,
+        message: 'Title, ingredients, and instructions are required'
+      });
+    }
     
     const recipe = new Recipe({
       title,
       ingredients,
       instructions,
-      tags,
+      tags: tags || [],
       userId
     });
     
@@ -246,7 +335,7 @@ app.post('/api/recipes', async (req, res) => {
   }
 });
 
-// Health check endpoint
+// Health check endpoint - Public
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
