@@ -1,7 +1,20 @@
-// src/components/ChatUI/InputArea.js
 import React, { useState, useEffect, useRef } from 'react';
 
-const InputArea = ({ onSendMessage, disabled = false }) => {
+// Simple inline sanitization function
+const sanitizeInput = (text) => {
+  if (!text) return '';
+  
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+    .replace(/<script[^>]*>.*?<\/script>/gi, '') // Remove script tags
+    .trim();
+};
+
+const InputArea = ({ onSendMessage }) => {
   const [inputValue, setInputValue] = useState('');
   const [previewWarning, setPreviewWarning] = useState(null);
   const inputRef = useRef(null);
@@ -100,8 +113,14 @@ const InputArea = ({ onSendMessage, disabled = false }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (inputValue.trim() && !disabled) {
-      onSendMessage(inputValue);
+    if (inputValue.trim()) {
+      // Sanitize input before sending to prevent XSS
+      const sanitizedInput = sanitizeInput(inputValue);
+      
+      // Send sanitized input
+      onSendMessage(sanitizedInput);
+      
+      // Clear input field
       setInputValue('');
       setPreviewWarning(null);
       
@@ -127,18 +146,14 @@ const InputArea = ({ onSendMessage, disabled = false }) => {
         <input
           ref={inputRef}
           type="text"
-          className={`message-input ${previewWarning ? 'has-warning' : ''} ${previewWarning?.type === 'allergen' ? 'allergen-warning' : ''} ${disabled ? 'disabled' : ''}`}
-          placeholder={disabled ? "Cooldown active... Please wait" : "Ask for recipe suggestions..."}
+          className={`message-input ${previewWarning ? 'has-warning' : ''} ${previewWarning?.type === 'allergen' ? 'allergen-warning' : ''}`}
+          placeholder="Ask for recipe suggestions..."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          disabled={disabled}
+          maxLength={500} // Add length limit as additional protection
         />
         
-        <button 
-          type="submit" 
-          className="send-button" 
-          disabled={!inputValue.trim() || disabled}
-        >
+        <button type="submit" className="send-button" disabled={!inputValue.trim()}>
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path 
               d="M22 2L11 13" 

@@ -1,89 +1,195 @@
+/* src/components/Header/Header.css */
 .header {
-    padding: 15px 20px;
-    background-color: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px 20px;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.logo-icon {
+  font-size: 1.8rem;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.nav-list {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
+  margin: 0;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 5px 0;
+  position: relative;
+  transition: var(--transition);
+}
+
+.nav-link:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background: white;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover {
+  color: white;
+}
+
+.nav-link:hover:after,
+.nav-link.active:after {
+  width: 100%;
+}
+
+.nav-link.active {
+  color: white;
+}
+
+/* Login Box Styling */
+.login-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  margin-left: 20px;
+  font-size: 0.85rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 8px;
+  min-width: 200px;
+}
+
+.login-input {
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  width: 100%;
+  font-size: 0.85rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+}
+
+.login-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.login-button,
+.toggle-button,
+.logout-button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.login-button {
+  background: white;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.toggle-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.logout-button {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+}
+
+.login-button:hover {
+  background: #f0f0f0;
+  transform: translateY(-2px);
+}
+
+.toggle-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.logout-button:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.login-message {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 5px 0 0 0;
+  padding: 0;
+}
+
+.welcome {
+  font-weight: 500;
+  margin-right: 0;
+  margin-bottom: 8px;
+  color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .nav-list {
+    gap: 15px;
   }
   
+  .login-box {
+    min-width: 160px;
+  }
+}
+
+@media (max-width: 600px) {
   .header-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .nav-list {
+    justify-content: center;
+  }
+  
+  .login-box {
+    width: 100%;
+    max-width: 300px;
     margin: 0 auto;
   }
   
   .logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    justify-content: center;
   }
-  
-  .logo-icon {
-    font-size: 1.8rem;
-  }
-  
-  .logo-text {
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  
-  .nav-list {
-    display: flex;
-    list-style: none;
-    gap: 30px;
-  }
-  
-  .nav-link {
-    color: var(--text-color);
-    text-decoration: none;
-    font-weight: 500;
-    padding: 5px 0;
-    position: relative;
-    transition: var(--transition);
-  }
-  
-  .nav-link:after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: 0;
-    left: 0;
-    background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-    transition: width 0.3s ease;
-  }
-  
-  .nav-link:hover {
-    color: var(--primary-color);
-  }
-  
-  .nav-link:hover:after,
-  .nav-link.active:after {
-    width: 100%;
-  }
-  
-  .nav-link.active {
-    color: var(--primary-color);
-  }
-  
-  @media (max-width: 768px) {
-    .nav-list {
-      gap: 15px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .header-content {
-      flex-direction: column;
-      gap: 15px;
-    }
-    
-    .nav-list {
-      justify-content: center;
-    }
-  }
-  
+}

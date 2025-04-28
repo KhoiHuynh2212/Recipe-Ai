@@ -2,6 +2,36 @@
 import React, { useState, useEffect } from 'react';
 import './IngredientManagement.css';
 
+// Simple inline sanitization functions
+const sanitizeHtml = (text) => {
+  if (!text) return '';
+  
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
+const sanitizeForJavaScript = (text) => {
+  if (!text) return '';
+  
+  try {
+    // Using JSON.stringify helps escape characters for JS context
+    return JSON.stringify(text).slice(1, -1);
+  } catch (e) {
+    console.error('Error sanitizing for JavaScript:', e);
+    // Fallback to basic sanitization
+    return String(text)
+      .replace(/\\/g, '\\\\')
+      .replace(/"/g, '\\"')
+      .replace(/'/g, "\\'")
+      .replace(/\n/g, '\\n')
+      .replace(/\r/g, '\\r');
+  }
+};
+
 const IngredientManagement = ({ onSendMessage }) => {
   const [showPanel, setShowPanel] = useState(false);
   const [name, setName] = useState('');
@@ -51,13 +81,17 @@ const IngredientManagement = ({ onSendMessage }) => {
     }
 
     try {
+      // Sanitize inputs
+      const sanitizedName = sanitizeHtml(name.trim());
+      const sanitizedType = sanitizeHtml(type.trim() || 'Other');
+      
       // Get current ingredients from storage
       const storedIngredients = localStorage.getItem('pantryIngredients');
       const ingredientsData = storedIngredients ? JSON.parse(storedIngredients) : {};
       
       // Add or update ingredient
-      ingredientsData[name] = {
-        type: type || 'Other',
+      ingredientsData[sanitizedName] = {
+        type: sanitizedType,
         expiration: expiration || '',
         quantity: 1,
         addedDate: new Date().toISOString().split('T')[0]
@@ -66,8 +100,11 @@ const IngredientManagement = ({ onSendMessage }) => {
       // Save updated ingredients
       saveIngredientsToStorage(ingredientsData);
       
-      // Notify the chat about the new ingredient
-      onSendMessage(`Added "${name}" to your pantry${type ? ` as ${type}` : ''}${expiration ? ` with expiration date ${expiration}` : ''}.`);
+      // Prepare sanitized message
+      const message = `Added "${sanitizedName}" to your pantry${sanitizedType !== 'Other' ? ` as ${sanitizedType}` : ''}${expiration ? ` with expiration date ${expiration}` : ''}.`;
+      
+      // Notify the chat about the new ingredient with sanitized values
+      onSendMessage(message);
       
       // Reset form
       setName('');
@@ -84,6 +121,9 @@ const IngredientManagement = ({ onSendMessage }) => {
   // Add ingredient removal functionality
   const removeIngredient = (ingredientName) => {
     try {
+      // Sanitize input
+      const sanitizedName = sanitizeHtml(ingredientName);
+      
       // Get current ingredients from storage
       const storedIngredients = localStorage.getItem('pantryIngredients');
       if (!storedIngredients) return;
@@ -98,7 +138,7 @@ const IngredientManagement = ({ onSendMessage }) => {
         saveIngredientsToStorage(ingredientsData);
         
         // Notify the chat
-        onSendMessage(`Removed "${ingredientName}" from your pantry.`);
+        onSendMessage(`Removed "${sanitizedName}" from your pantry.`);
         
         // Refresh ingredients list
         loadIngredientsFromStorage();
@@ -127,6 +167,13 @@ const IngredientManagement = ({ onSendMessage }) => {
     } catch (error) {
       console.error('Error clearing ingredients:', error);
     }
+  };
+
+  // Handle search input with sanitization
+  const handleSearchChange = (e) => {
+    // Sanitize the search term
+    const sanitizedSearch = sanitizeHtml(e.target.value);
+    setSearchTerm(sanitizedSearch);
   };
 
   // Filter ingredients based on search term
@@ -238,6 +285,7 @@ const IngredientManagement = ({ onSendMessage }) => {
                   value={name} 
                   onChange={(e) => setName(e.target.value)} 
                   required
+                  maxLength={50} // Limit input length for security
                 />
               </div>
               
@@ -251,6 +299,7 @@ const IngredientManagement = ({ onSendMessage }) => {
                     value={type} 
                     onChange={(e) => setType(e.target.value)} 
                     list="common-types"
+                    maxLength={30} // Limit input length for security
                   />
                   <datalist id="common-types">
                     {commonTypes.map(type => (
@@ -287,7 +336,7 @@ const IngredientManagement = ({ onSendMessage }) => {
                   type="text"
                   placeholder="Search ingredients..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={handleSearchChange}
                   className="search-input"
                 />
                 {searchTerm && (
@@ -322,6 +371,9 @@ const IngredientManagement = ({ onSendMessage }) => {
                 <div className="ingredients-list">
                   {sortedIngredients.map(([name, details]) => {
                     const expirationStatus = getExpirationStatus(details.expiration);
+                    // Sanitize data for display
+                    const sanitizedName = sanitizeHtml(name);
+                    const sanitizedType = sanitizeHtml(details.type || '');
                     
                     return (
                       <div 
@@ -332,10 +384,10 @@ const IngredientManagement = ({ onSendMessage }) => {
                           {getTypeIcon(details.type)}
                         </div>
                         <div className="ingredient-info">
-                          <h4 className="ingredient-name">{name}</h4>
+                          <h4 className="ingredient-name">{sanitizedName}</h4>
                           <div className="ingredient-meta">
                             {details.type && (
-                              <span className="ingredient-type">{details.type}</span>
+                              <span className="ingredient-type">{sanitizedType}</span>
                             )}
                             {details.expiration && (
                               <span className={`ingredient-expiration ${expirationStatus ? expirationStatus : ''}`}>
@@ -350,7 +402,7 @@ const IngredientManagement = ({ onSendMessage }) => {
                         <button 
                           className="remove-ingredient-btn"
                           onClick={() => removeIngredient(name)}
-                          aria-label={`Remove ${name}`}
+                          aria-label={`Remove ${sanitizedName}`}
                         >
                           ×
                         </button>

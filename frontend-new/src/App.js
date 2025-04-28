@@ -16,8 +16,6 @@ function App() {
     const path = window.location.pathname;
     if (path.includes('meal-planner')) {
       setCurrentPage('meal-planner');
-    } else if (path.includes('saved')) {
-      setCurrentPage('saved');
     } else if (path.includes('about')) {
       setCurrentPage('about');
     } else {
@@ -29,8 +27,6 @@ function App() {
       const newPath = window.location.pathname;
       if (newPath.includes('meal-planner')) {
         setCurrentPage('meal-planner');
-      } else if (newPath.includes('saved')) {
-        setCurrentPage('saved');
       } else if (newPath.includes('about')) {
         setCurrentPage('about');
       } else {
@@ -47,7 +43,6 @@ function App() {
     setCurrentPage(page);
     let path = '/';
     if (page === 'meal-planner') path = '/meal-planner';
-    else if (page === 'saved') path = '/saved';
     else if (page === 'about') path = '/about';
     
     window.history.pushState({}, '', path);
@@ -59,11 +54,34 @@ function App() {
         <ChatProvider>
           <Header onNavigate={navigate} currentPage={currentPage} />
           <main className="main-content">
-            {currentPage === 'home' && <ChatUI />}
+            {currentPage === 'home' && <ChatUI onShowMealPlanner={() => navigate('meal-planner')} />}
             {currentPage === 'meal-planner' && <MealPlanner onGoBack={() => navigate('home')} />}
-            {/* Add other page components as needed */}
-            {currentPage === 'saved' && <div>Saved Recipes Page</div>}
-            {currentPage === 'about' && <div>About Page</div>}
+            {currentPage === 'about' && (
+              <div className="about-container">
+                <h2>About AI Recipe Chef</h2>
+                <p>
+                  AI Recipe Chef is an intelligent cooking assistant that helps you discover 
+                  delicious recipes based on your preferences, dietary restrictions, and 
+                  available ingredients.
+                </p>
+                <p>
+                  Our application uses advanced AI to provide personalized recipe suggestions, 
+                  answer cooking questions, and help you plan meals.
+                </p>
+                <h3>Features</h3>
+                <ul>
+                  <li>Personalized recipe recommendations</li>
+                  <li>Dietary restriction and allergen management</li>
+                  <li>Pantry tracking to use what you have</li>
+                  <li>Smart meal planning</li>
+                  <li>Nutritional guidance and meal customization</li>
+                </ul>
+                <p>
+                  AI Recipe Chef is constantly learning and improving to better serve your 
+                  culinary needs!
+                </p>
+              </div>
+            )}
           </main>
           <Footer />
         </ChatProvider>

@@ -2,6 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import './RestrictedMealSettings.css';
 
+// Simple inline sanitization function
+const sanitizeHtml = (text) => {
+  if (!text) return '';
+  
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
 const RestrictedMealSettings = ({ onSendMessage }) => {
   // State variables
   const [currentRestriction, setCurrentRestriction] = useState('');
@@ -78,23 +90,41 @@ const RestrictedMealSettings = ({ onSendMessage }) => {
   }, [savedAllergens]);
   
   const handleRestrictionChange = (e) => {
-    setCurrentRestriction(e.target.value);
+    // Sanitize the selected value
+    const sanitizedValue = sanitizeHtml(e.target.value);
+    setCurrentRestriction(sanitizedValue);
   };
   
   const handleAllergenChange = (e) => {
-    setCurrentAllergen(e.target.value);
+    // Sanitize the selected value
+    const sanitizedValue = sanitizeHtml(e.target.value);
+    setCurrentAllergen(sanitizedValue);
   };
   
   const addRestriction = () => {
     if (!currentRestriction) return;
+    
+    // Validate that the selection is from our approved list
+    const isValidOption = restrictionOptions.some(option => 
+      option.value === currentRestriction
+    );
+    
+    if (!isValidOption) {
+      console.error('Invalid restriction selected');
+      setCurrentRestriction('');
+      return;
+    }
     
     // Don't add duplicate restrictions
     if (!savedRestrictions.includes(currentRestriction)) {
       const newRestrictions = [...savedRestrictions, currentRestriction];
       setSavedRestrictions(newRestrictions);
       
+      // Sanitize message text
+      const message = `Added "${sanitizeHtml(currentRestriction)}" to your dietary restrictions. I'll make sure future recipes comply with this restriction.`;
+      
       // Notify the user
-      onSendMessage(`Added "${currentRestriction}" to your dietary restrictions. I'll make sure future recipes comply with this restriction.`);
+      onSendMessage(message);
       setCurrentRestriction('');
     }
   };
@@ -102,38 +132,56 @@ const RestrictedMealSettings = ({ onSendMessage }) => {
   const addAllergen = () => {
     if (!currentAllergen) return;
     
+    // Validate that the selection is from our approved list
+    const isValidOption = allergenOptions.some(option => 
+      option.value === currentAllergen
+    );
+    
+    if (!isValidOption) {
+      console.error('Invalid allergen selected');
+      setCurrentAllergen('');
+      return;
+    }
+    
     // Don't add duplicate allergens
     if (!savedAllergens.includes(currentAllergen)) {
       const newAllergens = [...savedAllergens, currentAllergen];
       setSavedAllergens(newAllergens);
       
+      // Sanitize message text
+      const message = `Added "${sanitizeHtml(currentAllergen)}" to your allergens. I'll warn you if recipes contain this ingredient.`;
+      
       // Notify the user
-      onSendMessage(`Added "${currentAllergen}" to your allergens. I'll warn you if recipes contain this ingredient.`);
+      onSendMessage(message);
       setCurrentAllergen('');
     }
   };
   
   const removeRestriction = (restriction) => {
+    // Sanitize to prevent XSS in case restriction data is compromised
+    const sanitizedRestriction = sanitizeHtml(restriction);
+    
     const newRestrictions = savedRestrictions.filter(r => r !== restriction);
     setSavedRestrictions(newRestrictions);
     
-    // Notify the user
-    onSendMessage(`Removed "${restriction}" from your dietary restrictions.`);
+    // Notify the user with sanitized message
+    onSendMessage(`Removed "${sanitizedRestriction}" from your dietary restrictions.`);
   };
   
   const removeAllergen = (allergen) => {
+    // Sanitize to prevent XSS in case allergen data is compromised
+    const sanitizedAllergen = sanitizeHtml(allergen);
+    
     const newAllergens = savedAllergens.filter(a => a !== allergen);
     setSavedAllergens(newAllergens);
     
-    // Notify the user
-    onSendMessage(`Removed "${allergen}" from your allergens.`);
+    // Notify the user with sanitized message
+    onSendMessage(`Removed "${sanitizedAllergen}" from your allergens.`);
   };
 
   return (
     <div className="dietary-preferences">
       <div className="dietary-header">
-       
-
       </div>
 
       <div className="preferences-grid">
@@ -167,11 +215,12 @@ const RestrictedMealSettings = ({ onSendMessage }) => {
               <div className="tags-container">
                 {savedRestrictions.map(restriction => (
                   <div key={restriction} className="preference-tag restriction-tag">
-                    <span>{restriction}</span>
+                    {/* Use sanitized text for display */}
+                    <span>{sanitizeHtml(restriction)}</span>
                     <button 
                       onClick={() => removeRestriction(restriction)}
                       className="remove-tag"
-                      aria-label={`Remove ${restriction}`}
+                      aria-label={`Remove ${sanitizeHtml(restriction)}`}
                     >
                       ×
                     </button>
@@ -214,11 +263,12 @@ const RestrictedMealSettings = ({ onSendMessage }) => {
               <div className="tags-container">
                 {savedAllergens.map(allergen => (
                   <div key={allergen} className="preference-tag allergen-tag">
-                    <span>{allergen}</span>
+                    {/* Use sanitized text for display */}
+                    <span>{sanitizeHtml(allergen)}</span>
                     <button 
                       onClick={() => removeAllergen(allergen)}
                       className="remove-tag"
-                      aria-label={`Remove ${allergen}`}
+                      aria-label={`Remove ${sanitizeHtml(allergen)}`}
                     >
                       ×
                     </button>
