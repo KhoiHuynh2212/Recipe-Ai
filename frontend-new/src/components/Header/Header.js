@@ -1,8 +1,45 @@
 // src/components/Header/Header.js
-import React from 'react';
+import React, { useState } from 'react';
 import './Header.css';
 
 const Header = ({ onNavigate, currentPage }) => {
+  const [users, setUsers] = useState({});
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loggedInUser, setLoggedInUser] = useState(null);
+  const [mode, setMode] = useState('login'); // or 'register'
+  const [message, setMessage] = useState('');
+
+  const handleLogin = () => {
+    if (users[username] && users[username] === password) {
+      setLoggedInUser(username);
+      setMessage('');
+    } else {
+      setMessage('Invalid login!');
+    }
+  };
+
+  const handleRegister = () => {
+    if (users[username]) {
+      setMessage('Username taken.');
+    } else {
+      setUsers(prev => ({ ...prev, [username]: password }));
+      setMessage('Registered!');
+    }
+  };
+
+  const handleLogout = () => {
+    setLoggedInUser(null);
+    setUsername('');
+    setPassword('');
+    setMessage('');
+  };
+
+  const handleSubmit = () => {
+    if (mode === 'login') handleLogin();
+    else handleRegister();
+  };
+
   return (
     <header className="header">
       <div className="header-content">
@@ -10,59 +47,61 @@ const Header = ({ onNavigate, currentPage }) => {
           <span className="logo-icon">🍳</span>
           <h1 className="logo-text">AI Recipe Chef</h1>
         </div>
-        
+
         <nav className="nav">
           <ul className="nav-list">
-            <li className="nav-item">
-              <a 
-                href="/" 
-                className={`nav-link ${currentPage === 'home' ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('home');
-                }}
-              >
-                Home
-              </a>
-            </li>
-            <li className="nav-item">
-              <a 
-                href="/meal-planner" 
-                className={`nav-link ${currentPage === 'meal-planner' ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('meal-planner');
-                }}
-              >
-                Meal Planner
-              </a>
-            </li>
-            <li className="nav-item">
-              <a 
-                href="/saved" 
-                className={`nav-link ${currentPage === 'saved' ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('saved');
-                }}
-              >
-                Saved Recipes
-              </a>
-            </li>
-            <li className="nav-item">
-              <a 
-                href="/about" 
-                className={`nav-link ${currentPage === 'about' ? 'active' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  onNavigate('about');
-                }}
-              >
-                About
-              </a>
-            </li>
+            {['home', 'meal-planner', 'saved', 'about'].map((page) => (
+              <li key={page} className="nav-item">
+                <a 
+                  href={`/${page}`} 
+                  className={`nav-link ${currentPage === page ? 'active' : ''}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate(page);
+                  }}
+                >
+                  {page.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                </a>
+              </li>
+            ))}
           </ul>
         </nav>
+
+        <div className="login-box">
+          {loggedInUser ? (
+            <>
+              <span className="welcome">👋 Welcome, {loggedInUser}</span>
+              <button className="logout-button" onClick={handleLogout}>Logout</button>
+            </>
+          ) : (
+            <>
+              <input
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                className="login-input"
+              />
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                className="login-input"
+              />
+              <button className="login-button" onClick={handleSubmit}>
+                {mode === 'login' ? 'Login' : 'Register'}
+              </button>
+              <button
+                className="toggle-button"
+                onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
+              >
+                {mode === 'login' ? 'Switch to Register' : 'Switch to Login'}
+              </button>
+              {message && <p className="login-message">{message}</p>}
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
