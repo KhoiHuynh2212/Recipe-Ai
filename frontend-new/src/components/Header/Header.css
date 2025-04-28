@@ -189,3 +189,7 @@
     margin: 0 auto;
   }
   
+  .logo {
+    justify-content: center;
+  }
+}
