@@ -19,3 +19,7 @@ export default defineConfig([
   },
   pluginReact.configs.flat.recommended,
 ]);
+
+
+// To test the ESLint configuration, run the following command in the terminal:
+// npm run lint
